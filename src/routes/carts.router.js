@@ -38,6 +38,30 @@ router.delete('/:cid/products/:pid', async (req, res) => {
     http://localhost:8080/api/carts/646adb45fab3b6b69a5fa45b/products/646b909915e9a48004bd8d64    
   */
 
+router.delete('/:cid', async (req, res) => {
+    const { cid } = req.params;
+    
+    try {
+        const cart = await cartModel.findOne({ _id: cid });
+    
+        if (!cart) {
+        return res.status(404).json({ message: 'Carrito no encontrado' });
+        }
+    
+        cart.cartProducts = [];
+    
+        await cart.save();
+    
+        return res.json({ message: 'Productos eliminados del carrito exitosamente' });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Error al eliminar los productos del carrito' });
+    }
+    });
+    /* Ejemplo de la request delete anterior para vaciar el carrito
+        DELETE http://localhost:8080/api/carts/646adb45fab3b6b69a5fa45b  
+    */
+
 // POST /api/carts/:cid
 router.post('/:cid', async (req, res) => {
     const { cid } = req.params;
